@@ -5,11 +5,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DataManager {
+
     public static Connection connect() {
         String url = "jdbc:sqlserver://skills4it.database.windows.net:1433;" +
                 "database=Courses;" +
-                "user=gtareader@skills4it;" +
-                "password=StrongPass!2025;" +
+                "user=user405@skills4it;" +
+                "password=YearupSecure2025!;" +
                 "encrypt=true;" +
                 "trustServerCertificate=false;" +
                 "loginTimeout=30;";
