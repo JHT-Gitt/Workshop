@@ -1,4 +1,4 @@
-package org.example;
+package org.example.VehicleFiles;
 
 public class Vehicle {
     int vinID;

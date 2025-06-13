@@ -1,4 +1,8 @@
-package org.example;
+package org.example.VehicleFiles;
+import org.example.Contracts.LeaseContract;
+import org.example.Contracts.SalesContract;
+import org.example.DatabaseFile.DataManager;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +16,7 @@ public class VehicleDAO {
         String query = "SELECT * FROM JT.vehicles " +
                 "WHERE price BETWEEN ? AND ?";
         try(Connection c = DataManager.connect();
-        PreparedStatement p = c.prepareStatement(query)){
+            PreparedStatement p = c.prepareStatement(query)){
 
             p.setDouble(1, min);
             p.setDouble(2, max);
@@ -92,9 +96,6 @@ public class VehicleDAO {
             return false;
         }
     }
-
-
-
     public boolean addVehicle(Vehicle v) {
         String sql = "INSERT INTO JT.vehicles (vin_id, make, model, color, price, year, sold, odometer, type) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -136,4 +137,10 @@ public class VehicleDAO {
             return false;
         }
     }
+
+
+
+
+
+
 }

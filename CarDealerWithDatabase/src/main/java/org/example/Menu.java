@@ -1,11 +1,19 @@
 package org.example;
 
+import org.example.Contracts.ContractsDao;
+import org.example.Contracts.LeaseContract;
+import org.example.Contracts.SalesContract;
+import org.example.VehicleFiles.Vehicle;
+import org.example.VehicleFiles.VehicleDAO;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
 
         VehicleDAO vDao = new VehicleDAO();
+        ContractsDao cDao = new ContractsDao();
 
         int choice;
         static Scanner scanner = new Scanner(System.in);
@@ -46,24 +54,131 @@ public class Menu {
                     case 4 -> color();
                     case 5 -> mileage();
                     case 6 -> type();
-                    case 7 -> addVehicle();
-                    case 8 -> removeVehicle();
-                    case 9 -> addSales();
-                    case 10 -> addLease();
+                    case 7 -> {
+                        System.out.println("\nAdd Vehicle\n");
+                            addVehicle();
+                    }
+                    case 8 -> {
+                        System.out.println("\nREMOVE VEHICLE\n");
+                        removeVehicle();
+                    }
+                    case 9 -> {
+                        System.out.println("\nAdd Sales Contract\n");
+                            addSales();
+                    }
+                    case 10 -> {
+                        System.out.println("\nAdd Lease Contract\n");
+                            addLease();
+                    }
                     default -> {
                         System.out.println("Invalid input ! ");
                     }
 
                 }
-
-
             }
         }
 
     private void addLease() {
+
+        int vinID = 0;
+        boolean valid = false;
+
+        while(!valid) {
+            System.out.print("Vehicle VIN ID: ");
+            vinID = scanner.nextInt();
+            scanner.nextLine();
+
+            if (!vDao.vehicleExists(vinID)) {
+                System.out.println("Cannot find VIN ID. Please use a different VIN ID.");
+                addLease();
+            }
+            valid = true;
+        }
+        System.out.print("Enter Customer ID: ");
+        int customerId = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.print("Enter Lease Start Date (YYYY-MM-DD): ");
+        LocalDate leaseStart = LocalDate.parse(scanner.nextLine());
+
+        System.out.print("Enter Lease End Date (YYYY-MM-DD): ");
+        LocalDate leaseEnd = LocalDate.parse(scanner.nextLine());
+
+        System.out.print("Enter Monthly Payment: ");
+        double monthlyPayment = scanner.nextDouble();
+        scanner.nextLine();
+
+        System.out.print("Enter Contract Signed Date (YYYY-MM-DD): ");
+        LocalDate contractSigned = LocalDate.parse(scanner.nextLine());
+
+        System.out.print("Enter Remarks: ");
+        String remarks = scanner.nextLine();
+
+        System.out.print("Is the contract active? (yes/no): ");
+        String isActive = scanner.nextLine();
+
+        if(isActive.equals("yes") || isActive.equals("Yes") || isActive.equals("YES")){
+            isActive = "1";
+        }else if(isActive.equals("no") || isActive.equals("No") || isActive.equals("NO")){
+            isActive = "0";
+        }
+
+        LeaseContract lease = new LeaseContract( customerId,vinID, leaseStart, leaseEnd, monthlyPayment, contractSigned,
+                remarks, isActive);
+        boolean success = cDao.addLeaseContract(lease);
+        if (success) {
+            System.out.println("\nLease Contract added successfully.\n");
+            display();
+        } else {
+            System.out.println("Failed to add lease contract.");
+            addLease();
+        }
     }
 
     private void addSales() {
+        int vin = 0;
+        boolean valid = false;
+
+        while(!valid) {
+        System.out.print("Enter VIN: ");
+        vin = scanner.nextInt();
+        scanner.nextLine();
+
+            if (!vDao.vehicleExists(vin)) {
+                System.out.println("Cannot find VIN ID. Please use a different VIN ID.");
+                addSales();
+            }
+            valid = true;
+        }
+        System.out.print("Enter contract signed date (YYYY-MM-DD): ");
+        String dateInput = scanner.nextLine();
+        LocalDate contractDate = LocalDate.parse(dateInput);
+
+        System.out.print("Enter amount: ");
+        double amount = scanner.nextDouble();
+        scanner.nextLine();
+
+        System.out.print("Enter remarks: ");
+        String remarks = scanner.nextLine();
+
+        System.out.print("Is the contract active? (yes/no): ");
+        String isActive = scanner.nextLine();
+
+        if(isActive.equals("yes") || isActive.equals("Yes") || isActive.equals("YES")){
+            isActive = "1";
+        }else if(isActive.equals("no") || isActive.equals("No") || isActive.equals("NO")){
+            isActive = "0";
+        }
+
+        SalesContract newSale = new SalesContract(vin, contractDate, amount, remarks, isActive);
+        boolean success = cDao.addSalesContract(newSale);
+        if (success) {
+            System.out.println("\nSale Contract added successfully.\n");
+            display();
+        } else {
+            System.out.println("Failed to add sale contract.");
+            addSales();
+        }
     }
 
     private void removeVehicle() {
@@ -143,6 +258,7 @@ public class Menu {
             display();
         } else {
             System.out.println("Failed to add vehicle.");
+            addVehicle();
         }
 
     }
